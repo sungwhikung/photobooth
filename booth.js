@@ -658,22 +658,36 @@ function closeSettings(){
 $('#gear').onclick = e => { e.stopPropagation(); openSettings(); };
 $('#closeSet').onclick = closeSettings;
 document.addEventListener('keydown', e => {
-  if (e.target.tagName === 'INPUT') return;
+  if (e.target.tagName === 'INPUT' || $('#qrTest').classList.contains('open')) return;
   if ((e.key === 's' || e.key === 'S') && $('#s-start').classList.contains('active')) openSettings();
   if ((e.key === 'Enter' || e.key === ' ') && $('#s-start').classList.contains('active') && !$('#settings').classList.contains('open')) $('#s-start').click();
 });
 $('#fullscreen').onclick = () => document.documentElement.requestFullscreen?.().catch(()=>{});
+function qrTest(msg, isErr, link){
+  $('#qrTest').classList.add('open');
+  $('#qrTestBox').classList.toggle('hide', !link);
+  if (link) drawQR($('#qrTestCanvas'), link);
+  $('#qrTestMsg').textContent = msg;
+  $('#qrTestMsg').classList.toggle('err', !!isErr);
+}
+$('#qrTestClose').onclick = () => $('#qrTest').classList.remove('open');
 $('#testUpload').onclick = async () => {
   closeSettings();
-  if (settings.upload === 'off') return alert('QR 다운로드가 꺼져 있어요.');
-  const c = document.createElement('canvas'); c.width = 300; c.height = 450;
-  const x = c.getContext('2d'); x.fillStyle = '#ffc9d9'; x.fillRect(0,0,300,450);
-  x.fillStyle = '#7a2a45'; x.font = `36px ${FONT}`; x.textAlign = 'center'; x.fillText('QR 테스트', 150, 225);
+  if (settings.upload === 'off') return qrTest('QR 다운로드가 "사용 안 함"으로 되어 있어요.', true);
+  qrTest('테스트 사진을 올리고 있어요…');
+  const c = document.createElement('canvas'); c.width = 600; c.height = 900;
+  const x = c.getContext('2d'); x.fillStyle = '#ffc9d9'; x.fillRect(0,0,600,900);
+  x.fillStyle = '#7a2a45'; x.font = `64px ${FONT}`; x.textAlign = 'center'; x.fillText('QR 테스트 성공!', 300, 450);
   const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', .9));
   try {
     const url = await uploadFile(blob, 'fourcut_test.jpg');
-    alert('업로드 성공!\n\n휴대폰에서 열릴 주소:\n' + shareLink(url, null));
-  } catch (e) { alert('업로드 실패: ' + e.message); }
+    qrTest('업로드 성공!\n휴대폰 카메라로 QR을 찍어서 분홍색 "QR 테스트 성공!" 사진이 보이면 끝이에요.', false, shareLink(url, null));
+  } catch (e) {
+    const why = /fetch|network|load failed/i.test(e.message)
+      ? '이 저장소가 웹페이지에서 올리는 것을 막고 있거나 인터넷 연결이 끊겼어요.'
+      : e.message;
+    qrTest(`업로드 실패\n${why}\n\n관리자 설정에서 업로드 방식을 Cloudinary로 바꿔 보세요.\n(오류 내용: ${e.message})`, true);
+  }
 };
 $('#testPrint').onclick = async () => {
   closeSettings();
