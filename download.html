@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https: blob: data:; media-src https: blob:; connect-src https:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#17141c">
+<title>네컷 사진 받기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="download.css">
+</head>
+<body>
+<main>
+  <header>
+    <div class="logo"><span>♥</span><span>✦</span><span>☺</span><span>★</span></div>
+    <h1>네컷 사진관</h1>
+  </header>
+
+  <div id="content" hidden>
+    <div class="tabs" id="tabs" hidden>
+      <button class="tab on" data-tab="photo">사진</button>
+      <button class="tab" data-tab="video">움직이는 네컷</button>
+    </div>
+    <section class="card" id="photoCard">
+      <img id="photo" alt="네컷 사진">
+      <button class="save" id="savePhoto">사진 저장하기</button>
+    </section>
+    <section class="card" id="videoCard" hidden>
+      <video id="video" autoplay muted loop playsinline></video>
+      <button class="save" id="saveVideo">영상 저장하기</button>
+    </section>
+    <p class="note" id="expire"></p>
+    <p class="note small">저장 버튼이 안 되면 사진을 <b>길게 눌러</b> 저장해 주세요.<br>아이폰은 공유 창에서 <b>“이미지 저장”</b>을 누르세요.</p>
+  </div>
+
+  <div id="error" class="card msg" hidden>
+    <div class="big">😢</div>
+    <h2 id="errTitle">사진을 찾을 수 없어요</h2>
+    <p id="errText">보관 기간이 지나 삭제되었거나 잘못된 주소예요.</p>
+  </div>
+</main>
+<script src="download.js"></script>
+</body>
+</html>

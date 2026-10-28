@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src https://tmpfiles.org https://api.imgbb.com https://api.cloudinary.com; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>네컷 사진관</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="booth.css">
+</head>
+<body>
+
+<!-- 1. 시작 -->
+<section id="s-start" class="screen active">
+  <button id="gear" class="iconbtn" title="관리자 설정">⚙</button>
+  <div class="logo"><span>♥</span><span>✦</span><span>☺</span><span>★</span></div>
+  <h1>네컷 사진관</h1>
+  <div class="touch">화면을 터치하여 시작하세요</div>
+</section>
+
+<!-- 2. 프레임/매수 선택 -->
+<section id="s-layout" class="screen">
+  <div class="topbar">
+    <button class="iconbtn home" title="처음으로">⌂</button>
+    <div class="center"><h2>프레임을 선택해 주세요</h2><div class="sub">4×6 인치 사진 용지에 인쇄됩니다</div></div>
+    <div class="timer" data-timer></div>
+  </div>
+  <div class="choices">
+    <button class="choice on" data-layout="strip">
+      <div class="mini strip"><div><i></i><i></i><i></i><i></i></div><div><i></i><i></i><i></i><i></i></div></div>
+      <div class="name">네컷 스트립</div>
+      <div class="desc">2×6 세로 두 줄 · 반 잘라서 2장</div>
+    </button>
+    <button class="choice" data-layout="grid">
+      <div class="mini grid"><i></i><i></i><i></i><i></i></div>
+      <div class="name">2×2 그리드</div>
+      <div class="desc">4×6 한 장 · 큰 사진 네 컷</div>
+    </button>
+  </div>
+  <div class="row">
+    <div class="stepper"><button id="minus">−</button><b id="copies">1장</b><button id="plus">+</button></div>
+    <button class="big" id="toShoot">촬영 시작</button>
+  </div>
+</section>
+
+<!-- 3. 촬영 -->
+<section id="s-shoot" class="screen">
+  <div class="topbar">
+    <button class="iconbtn home" title="처음으로">⌂</button>
+    <div class="center"><h2 id="shotCounter">1 / 8</h2></div>
+    <div style="width:52px"></div>
+  </div>
+  <div class="stagewrap">
+    <div class="stage" id="stage">
+      <video id="video" playsinline muted autoplay></video>
+      <div class="msg" id="shootMsg">화면을 보고 포즈를 취해 주세요</div>
+      <div class="count" id="count"></div>
+    </div>
+  </div>
+  <div class="thumbs" id="thumbs"></div>
+</section>
+
+<!-- 4. 사진 고르기 -->
+<section id="s-select" class="screen">
+  <div class="topbar">
+    <button class="iconbtn home" title="처음으로">⌂</button>
+    <div class="center"><h2>마음에 드는 사진 4장을 골라 주세요</h2><div class="sub">고른 순서대로 프레임에 들어가요</div></div>
+    <div class="timer" data-timer></div>
+  </div>
+  <div class="work">
+    <div class="preview"><canvas id="selPreview" width="1200" height="1800"></canvas></div>
+    <div class="side">
+      <div class="shots" id="shots"></div>
+      <div class="foot"><div class="info" id="selInfo">0 / 4 선택</div><button class="big" id="toDeco" disabled>다음</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. 꾸미기 -->
+<section id="s-deco" class="screen">
+  <div class="topbar">
+    <button class="iconbtn home" title="처음으로">⌂</button>
+    <div class="center"><h2>테두리와 필터를 골라 주세요</h2></div>
+    <div class="timer" data-timer></div>
+  </div>
+  <div class="work">
+    <div class="preview"><canvas id="decoPreview" width="1200" height="1800"></canvas></div>
+    <div class="side">
+      <div class="decoscroll">
+        <div class="group"><h3>테두리 색상</h3><div class="swatches" id="frames"></div></div>
+        <div class="group"><h3>필터</h3><div class="filters" id="filters"></div></div>
+        <div class="group"><h3>문구</h3>
+          <div class="textrow">
+            <input id="caption" maxlength="20" placeholder="문구를 입력하세요" autocomplete="off">
+            <button class="chip on" id="dateChip">날짜 표시</button>
+          </div>
+          <div class="textrow" style="margin-top:10px" id="presets"></div>
+        </div>
+      </div>
+      <div class="foot"><button class="ghost" id="backSel">← 사진 다시 고르기</button><button class="big" id="printBtn">🖨 인쇄하기</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. 인쇄 + QR -->
+<section id="s-print" class="screen">
+  <div class="printwrap">
+    <img class="pv" id="finalImg" alt="완성된 네컷 사진">
+    <div class="qrpanel">
+      <h2 class="dots" id="printMsg">사진을 인쇄하고 있어요</h2>
+      <div class="qrbox" id="qrBox">
+        <canvas id="qr" width="330" height="330"></canvas>
+        <div class="qrstate" id="qrState"></div>
+      </div>
+      <div class="qrcap" id="qrCap">휴대폰 카메라로 QR 코드를 찍으면<br><b>사진과 움직이는 네컷 영상</b>을 받을 수 있어요</div>
+      <div class="row">
+        <button class="ghost" id="reprint">다시 인쇄</button>
+        <button class="big home2">처음으로 <span id="homeCount"></span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 관리자 설정 -->
+<div id="settings">
+  <div class="modal">
+    <h3>관리자 설정</h3>
+    <p class="hint">이 컴퓨터의 브라우저에만 저장되며 GitHub에는 올라가지 않습니다. 키보드 <b>S</b> 키로도 열 수 있어요.</p>
+
+    <h4>촬영</h4>
+    <div class="field"><div>카메라</div><select id="o-device"><option value="">기본 카메라</option></select></div>
+    <div class="field"><div>카메라 좌우 반전 (거울 모드)</div><input type="checkbox" id="o-mirror"></div>
+    <div class="field"><div>한 컷당 카운트다운 (초)</div><input type="number" id="o-countdown" min="1" max="30"></div>
+    <div class="field"><div>촬영 컷 수<small>이 중에서 4장을 고릅니다</small></div><input type="number" id="o-shots" min="4" max="12"></div>
+    <div class="field"><div>사진 고르기 / 꾸미기 제한시간 (초)<small>0 = 제한 없음</small></div><input type="number" id="o-limit" min="0" max="600"></div>
+
+    <h4>인쇄 (4×6 인치)</h4>
+    <div class="field"><div>인쇄 크기 보정 (%)<small>테두리 없는 인쇄에서 잘리면 줄이세요 (기본 100)</small></div><input type="number" id="o-scale" min="80" max="110" step="0.5"></div>
+    <div class="field"><div>인쇄 위치 보정 가로 / 세로 (mm)</div><div><input type="number" id="o-offx" step="0.5" min="-10" max="10"> <input type="number" id="o-offy" step="0.5" min="-10" max="10"></div></div>
+    <div class="field"><div>스트립 가운데 자르는 선 표시</div><input type="checkbox" id="o-cut"></div>
+
+    <h4>QR 다운로드</h4>
+    <div class="field"><div>사진 업로드 방식<small>휴대폰으로 받으려면 사진을 임시 저장소에 올려야 합니다</small></div>
+      <select id="o-upload">
+        <option value="tmpfiles">tmpfiles.org (가입 불필요 · 60분 후 자동 삭제)</option>
+        <option value="imgbb">ImgBB (API 키 필요 · 사진만)</option>
+        <option value="cloudinary">Cloudinary (무료 계정 · 사진+영상)</option>
+        <option value="off">사용 안 함 (QR 끄기)</option>
+      </select></div>
+    <div class="field" data-for="imgbb"><div>ImgBB API 키<small>api.imgbb.com 에서 무료 발급</small></div><input type="password" id="o-imgbbKey" autocomplete="off"></div>
+    <div class="field" data-for="imgbb"><div>ImgBB 보관 시간</div>
+      <select id="o-imgbbExpire"><option value="3600">1시간</option><option value="86400">1일</option><option value="604800">7일</option><option value="2592000">30일</option></select></div>
+    <div class="field" data-for="cloudinary"><div>Cloudinary Cloud name</div><input type="text" id="o-cloudName" autocomplete="off"></div>
+    <div class="field" data-for="cloudinary"><div>Upload preset (Unsigned)</div><input type="text" id="o-cloudPreset" autocomplete="off"></div>
+    <div class="field"><div>움직이는 네컷 영상 만들기<small>촬영 직전 3초를 영상으로 함께 제공</small></div><input type="checkbox" id="o-live"></div>
+    <div class="field"><div>다운로드 페이지 주소<small>비워 두면 자동 (GitHub 사이트의 download.html)</small></div><input type="url" id="o-pageUrl" placeholder="https://아이디.github.io/저장소/" autocomplete="off"></div>
+
+    <h4>보안</h4>
+    <div class="field"><div>관리자 비밀번호<small>설정하면 이 창을 열 때 비밀번호를 물어봅니다</small></div><input type="password" id="o-pin" autocomplete="new-password"></div>
+
+    <div class="btns">
+      <button id="testPrint">4×6 테스트 인쇄</button>
+      <button id="testUpload">QR 업로드 테스트</button>
+      <button id="fullscreen">전체 화면</button>
+      <button id="closeSet" class="primary">저장하고 닫기</button>
+    </div>
+  </div>
+</div>
+
+<div class="flash" id="flash"></div>
+<div id="printArea"></div>
+
+<script src="qrcode.js"></script>
+<script src="booth.js"></script>
+</body>
+</html>
