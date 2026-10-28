@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src https://tmpfiles.org https://api.imgbb.com https://api.cloudinary.com; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src https://tmpfiles.org https://api.imgbb.com https://api.cloudinary.com https://res.cloudinary.com https://i.ibb.co; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex">
 <title>네컷 사진관</title>
@@ -145,9 +145,9 @@
     <h4>QR 다운로드</h4>
     <div class="field"><div>사진 업로드 방식<small>휴대폰으로 받으려면 사진을 임시 저장소에 올려야 합니다</small></div>
       <select id="o-upload">
-        <option value="tmpfiles">tmpfiles.org (가입 불필요 · 60분 후 자동 삭제)</option>
+        <option value="cloudinary">Cloudinary (사진+영상)</option>
         <option value="imgbb">ImgBB (API 키 필요 · 사진만)</option>
-        <option value="cloudinary">Cloudinary (무료 계정 · 사진+영상)</option>
+        <option value="tmpfiles">tmpfiles.org (웹 업로드가 막힐 수 있음)</option>
         <option value="off">사용 안 함 (QR 끄기)</option>
       </select></div>
     <div class="field" data-for="imgbb"><div>ImgBB API 키<small>api.imgbb.com 에서 무료 발급</small></div><input type="password" id="o-imgbbKey" autocomplete="off"></div>

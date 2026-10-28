@@ -28,3 +28,5 @@ h1{font-weight:400;font-size:34px;margin:10px 0 0}
 .msg h2{font-weight:400;margin:6px 0}
 .msg p{color:var(--muted);margin:0}
 [hidden]{display:none!important}
+.diag{display:block;margin-top:14px;color:var(--accent2);font-size:14px;word-break:break-all}
+a.diag{color:#8ccaff}

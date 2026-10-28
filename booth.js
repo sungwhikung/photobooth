@@ -10,11 +10,15 @@ const CLIP_FPS = 10, CLIP_SEC = 3;        // 움직이는 네컷: 셔터 직전 
 const DEFAULTS = {
   deviceId:'', mirror:true, countdown:10, shots:8, limit:60,
   scale:100, offX:0, offY:0, cutGuide:true,
-  upload:'tmpfiles', imgbbKey:'', imgbbExpire:86400, cloudName:'', cloudPreset:'',
+  upload:'cloudinary', imgbbKey:'', imgbbExpire:86400, cloudName:'y8ws9zmi', cloudPreset:'fourcut',
   liveVideo:true, pageUrl:'', pin:''
 };
 let settings = {...DEFAULTS};
 try { Object.assign(settings, JSON.parse(localStorage.getItem('fourcut-settings') || '{}')); } catch {}
+// 예전 기본값(tmpfiles)은 웹페이지 업로드가 막혀 있어 Cloudinary로 옮김
+if (settings.upload === 'tmpfiles') settings.upload = 'cloudinary';
+if (!settings.cloudName) settings.cloudName = DEFAULTS.cloudName;
+if (!settings.cloudPreset) settings.cloudPreset = DEFAULTS.cloudPreset;
 function saveSettings(){ try { localStorage.setItem('fourcut-settings', JSON.stringify(settings)); } catch {} }
 
 /* ---------- 상태 ---------- */
@@ -681,6 +685,14 @@ $('#testUpload').onclick = async () => {
   const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', .9));
   try {
     const url = await uploadFile(blob, 'fourcut_test.jpg');
+    // 올린 사진을 실제로 다시 열 수 있는지 확인
+    let check = '';
+    try {
+      const r = await fetch(url, {cache:'no-store', credentials:'omit'});
+      if (!r.ok) check = `오류 코드 ${r.status}` + (r.headers.get('x-cld-error') ? ` (${r.headers.get('x-cld-error')})` : '');
+    } catch (e) { check = '확인 불가: ' + e.message; }
+    if (check && !check.startsWith('확인 불가'))
+      return qrTest(`업로드는 됐지만 올린 사진을 열 수 없어요.\n${check}\n\n사진 주소:\n${url}`, true);
     qrTest('업로드 성공!\n휴대폰 카메라로 QR을 찍어서 분홍색 "QR 테스트 성공!" 사진이 보이면 끝이에요.', false, shareLink(url, null));
   } catch (e) {
     const why = /fetch|network|load failed/i.test(e.message)

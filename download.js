@@ -39,7 +39,19 @@ if (!photo) {
 } else {
   $('#content').hidden = false;
   const img = $('#photo');
-  img.onerror = () => fail('사진을 불러오지 못했어요', '보관 기간이 지나 삭제되었거나 인터넷 연결이 불안정해요.');
+  img.onerror = async () => {
+    fail('사진을 불러오지 못했어요', '보관 기간이 지나 삭제되었거나 인터넷 연결이 불안정해요.');
+    // 원인 확인용 정보 표시
+    let code = '';
+    try {
+      const r = await fetch(photo, {cache:'no-store', credentials:'omit'});
+      code = `오류 코드 ${r.status}` + (r.headers.get('x-cld-error') ? ` · ${r.headers.get('x-cld-error')}` : '');
+    } catch (e) { code = '연결 실패 · ' + e.message; }
+    const p = document.createElement('p'); p.className = 'diag'; p.textContent = code;
+    const a = document.createElement('a'); a.href = photo; a.target = '_blank'; a.rel = 'noopener noreferrer';
+    a.className = 'diag'; a.textContent = '원본 주소 직접 열어 보기';
+    $('#error').append(p, a);
+  };
   img.src = photo;
   if (exp) {
     const d = new Date(exp * 1000);
